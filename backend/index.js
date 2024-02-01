@@ -76,11 +76,31 @@ app.get("/", (req, res)=>{
 //     })
 // })
 
+// app.get("/customers", (req, res) => {
+//     const q = "SELECT *, CONCAT('http://localhost:8800/images/', profilePicture) as imagePath FROM customer";
+//     db.query(q, (err, data) => {
+//         if (err) return res.json(err);
+//         return res.json(data);
+//     });
+// });
+
 app.get("/customers", (req, res) => {
-    const q = "SELECT *, CONCAT('http://localhost:8800/images/', profilePicture) as imagePath FROM customer";
+    //const baseImageUrl = "http://localhost:8800/images/";  // Replace with the actual base URL
+    const baseImageUrl = `${req.protocol}://${req.get("host")}/images/`;
+
+    const q = "SELECT *, profilePicture as imagePath FROM customer";
     db.query(q, (err, data) => {
         if (err) return res.json(err);
-        return res.json(data);
+
+        // Construct the complete image URL for each record
+        const formattedData = data.map(record => {
+            return {
+                ...record,
+                imagePath: baseImageUrl + record.profilePicture
+            };
+        });
+
+        return res.json(formattedData);
     });
 });
 
@@ -146,8 +166,6 @@ app.put("/customer/:id",upload.single('profilePicture') , (req,res)=>{
         return res.json("customer data updated successfully");
     });
 });
-
-
 
 app.listen(8800, ()=>{
     console.log("Connected to backend on PORT 8800!")
