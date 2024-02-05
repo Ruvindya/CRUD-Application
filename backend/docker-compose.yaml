@@ -1,0 +1,39 @@
+# version: '3'
+# services:
+#   backend:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8800:8800"
+#     depends_on:
+#       - mysql
+#   mysql:
+#     image: mysql:latest
+#     environment:
+#       MYSQL_ROOT_PASSWORD: root
+#       MYSQL_DATABASE: crud_application
+#       MYSQL_USER: root
+#       MYSQL_PASSWORD: root
+#     ports:
+#       - "3306:3306"
+
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: crud_application
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+
+  node_app:
+    build:
+      context: .
+    ports:
+      - "8800:8800"
+    depends_on:
+      - mysql
